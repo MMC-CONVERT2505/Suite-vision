@@ -1,0 +1,334 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Suite Vision</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Concept mockup: Reckon One shell (slate + teal) with MMC-built apps (orange) integrated.
+     Two views: Onboarding journey and Workspace. */
+  :root{
+    --bg:#eef1f5; --panel:#ffffff; --ink:#15232f; --muted:#64748b; --line:#e3e8ee;
+    --side:#13233a; --side2:#1b3150; --side-ink:#e6edf5; --side-muted:#8ea0b8;
+    --teal:#0e8f8a; --teal-bg:#e2f3f2;
+    --mmc:#c8702f; --mmc-ink:#ffffff; --mmc-bg:#f6ebe1;
+    --good:#2e7d5b; --good-bg:#e7f2ec; --warn:#b4701f; --warn-bg:#f7eedd;
+    --font:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#0c1622; --panel:#13202f; --ink:#e8eef5; --muted:#93a3b6; --line:#243447;
+    --side:#0a1420; --side2:#16263c; --side-ink:#e6edf5; --side-muted:#7e90a8;
+    --teal:#3bb3ad; --teal-bg:#0f2b2a;
+    --mmc:#e0914f; --mmc-ink:#1a1206; --mmc-bg:#2b2114;
+    --good:#4bbd8e; --good-bg:#14301f; --warn:#dca24e; --warn-bg:#2f2614;
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0c1622; --panel:#13202f; --ink:#e8eef5; --muted:#93a3b6; --line:#243447;
+    --side:#0a1420; --side2:#16263c; --side-ink:#e6edf5; --side-muted:#7e90a8;
+    --teal:#3bb3ad; --teal-bg:#0f2b2a;
+    --mmc:#e0914f; --mmc-ink:#1a1206; --mmc-bg:#2b2114;
+    --good:#4bbd8e; --good-bg:#14301f; --warn:#dca24e; --warn-bg:#2f2614;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+  /* top bar */
+  .top{display:flex;align-items:center;gap:14px;background:var(--side);color:var(--side-ink);padding:14px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .wm{font-weight:700;font-size:18px;letter-spacing:.3px}
+  .wm span{color:var(--teal)}
+  .concept{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#cdd8e6;border:1px solid #33496a;border-radius:999px;padding:4px 10px}
+  .ava{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--side2);display:grid;place-items:center;font-size:13px;font-weight:600;color:#cdd8e6}
+  /* tabs */
+  .tabs{display:flex;gap:4px;background:var(--side);padding:0 max(16px,env(safe-area-inset-left,0px)) 0;border-bottom:1px solid #22354f}
+  .tab{appearance:none;border:none;background:none;color:var(--side-muted);font-family:var(--font);font-size:15px;font-weight:600;padding:12px 18px;cursor:pointer;border-bottom:3px solid transparent}
+  .tab[aria-selected="true"]{color:#fff;border-bottom-color:var(--teal)}
+  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .hidden{display:none!important}
+  /* badges */
+  .mmctag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mmc);background:var(--mmc-bg);padding:3px 8px;border-radius:6px}
+  /* ---------- ONBOARDING ---------- */
+  #onb{padding-block:26px 56px}
+  .ohd{margin-bottom:22px}
+  .ohd h1{font-size:26px;margin:0 0 4px}
+  .ohd p{margin:0;color:var(--muted);font-size:14.5px}
+  .steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  .step{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:14px;font-weight:600;color:var(--muted)}
+  .step .n{width:24px;height:24px;border-radius:50%;background:var(--line);color:var(--muted);display:grid;place-items:center;font-size:13px;flex:none}
+  .step.done{color:var(--ink)} .step.done .n{background:var(--good);color:#fff}
+  .step.active{color:var(--ink);border-color:var(--teal);box-shadow:0 0 0 1px var(--teal)} .step.active .n{background:var(--teal);color:#fff}
+  .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media(max-width:780px){.ogrid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h2{font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  .src{display:flex;align-items:center;gap:12px;background:var(--teal-bg);border-radius:10px;padding:14px;margin-bottom:16px}
+  .src .lg{width:38px;height:38px;border-radius:8px;background:#fff;display:grid;place-items:center;font-weight:800;color:#13b5cf;font-size:15px;flex:none}
+  .src b{font-size:15px}.src div small{color:var(--muted);font-size:13px}
+  .btn{appearance:none;border:none;font-family:var(--font);font-weight:600;font-size:14.5px;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--teal);color:#fff}
+  .btn:hover{opacity:.93}.btn:active{transform:translateY(1px)}.btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .btn.mmc{background:var(--mmc);color:var(--mmc-ink)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin:14px 0 6px}
+  .bar i{display:block;height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .9s ease}
+  .applist{display:flex;flex-direction:column;gap:10px}
+  .approw{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .approw .ic{width:34px;height:34px;border-radius:8px;background:var(--mmc-bg);color:var(--mmc);display:grid;place-items:center;font-weight:700;flex:none}
+  .approw .nm{font-weight:600;font-size:14.5px}.approw .nm small{display:block;color:var(--muted);font-weight:400;font-size:12.5px}
+  .toggle{margin-left:auto;appearance:none;border:1px solid var(--mmc);background:transparent;color:var(--mmc);font-family:var(--font);font-weight:600;font-size:13px;border-radius:8px;padding:7px 14px;cursor:pointer}
+  .toggle[aria-pressed="true"]{background:var(--mmc);color:var(--mmc-ink)}
+  .ocount{margin-top:14px;font-size:13.5px;color:var(--muted)}
+  .octa{margin-top:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  /* ---------- WORKSPACE ---------- */
+  #ws{display:grid;grid-template-columns:248px 1fr;min-height:70vh}
+  @media(max-width:780px){#ws{grid-template-columns:1fr}}
+  .side{background:var(--side);color:var(--side-ink);padding:18px 14px}
+  @media(max-width:780px){.side{padding-bottom:8px}}
+  .navlbl{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--side-muted);margin:16px 10px 8px}
+  .navlbl:first-child{margin-top:4px}
+  .nav{appearance:none;width:100%;text-align:left;border:none;background:none;color:#cdd8e6;font-family:var(--font);font-size:14.5px;padding:10px 12px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:10px}
+  .nav .d{width:9px;height:9px;border-radius:3px;background:#44597a;flex:none}
+  .nav.core{color:#9fb0c6}
+  .nav.mmc .d{background:var(--mmc)}
+  .nav[aria-current="true"]{background:var(--side2);color:#fff}
+  .nav:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  .nav .tagpill{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--mmc);background:rgba(224,145,79,.16);padding:2px 6px;border-radius:5px}
+  .main{padding:24px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+  @media(min-width:781px){.main{padding-left:28px;padding-right:28px}}
+  .mhd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .mhd h1{font-size:23px;margin:0}
+  .msub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+  @media(max-width:560px){.tiles{grid-template-columns:1fr}}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .tile .k{font-size:12.5px;color:var(--muted)}
+  .tile .v{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+  .tile .v.good{color:var(--good)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:600}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px}
+  .chip.good{background:var(--good-bg);color:var(--good)} .chip.warn{background:var(--warn-bg);color:var(--warn)}
+  .rowbtn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-family:var(--font);font-size:13px;font-weight:600;border-radius:8px;padding:6px 12px;cursor:pointer}
+  .rowbtn.go{background:var(--good);border-color:var(--good);color:#fff}
+  .chart{display:flex;align-items:flex-end;gap:14px;height:180px;padding:16px 4px 0;border-bottom:1px solid var(--line)}
+  .chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%}
+  .chart .barwrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+  .chart .b{width:70%;background:var(--teal);border-radius:6px 6px 0 0}
+  .chart .b.mmc{background:var(--mmc)}
+  .chart .lbl{font-size:12px;color:var(--muted)}
+  .proj{display:flex;flex-direction:column;gap:14px}
+  .proj .p{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .proj .pt{display:flex;justify-content:space-between;font-size:14.5px;font-weight:600;margin-bottom:10px}
+  .proj .pt span{color:var(--muted);font-weight:400;font-size:13px}
+  .note{background:var(--mmc-bg);border:1px solid color-mix(in srgb,var(--mmc) 30%,transparent);border-radius:10px;padding:12px 14px;font-size:13.5px;color:var(--ink);margin-top:18px;display:flex;gap:10px;align-items:flex-start}
+  .qgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:6px}
+  @media(max-width:560px){.qgrid{grid-template-columns:1fr}}
+  .q{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;text-align:left;font-family:var(--font);color:var(--ink)}
+  .q:hover{border-color:var(--mmc)}
+  .q .ic{width:36px;height:36px;border-radius:9px;background:var(--mmc-bg);color:var(--mmc);display:grid;place-items:center;font-weight:700;flex:none}
+  .q .nm{font-weight:600;font-size:14.5px}.q .nm small{display:block;color:var(--muted);font-weight:400;font-size:12.5px}
+</style>
+
+<div class="top">
+  <div class="wm">Reckon <span>One</span></div>
+  <div class="concept">MMC vision concept</div>
+  <div class="ava">SC</div>
+</div>
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-view="onb">Onboarding journey</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="ws">Inside the workspace</button>
+</div>
+
+<!-- ONBOARDING -->
+<section id="onb"><div class="wrap">
+  <div class="ohd">
+    <h1>Welcome to Reckon One</h1>
+    <p>A new business sets up, brings its data across, and switches on the apps it needs, in one flow.</p>
+  </div>
+  <div class="steps">
+    <div class="step done"><span class="n">&#10003;</span>Create account</div>
+    <div class="step active"><span class="n">2</span>Bring your data</div>
+    <div class="step"><span class="n">3</span>Add your apps</div>
+    <div class="step"><span class="n">4</span>Go live</div>
+  </div>
+  <div class="ogrid">
+    <div class="card">
+      <h2>Bring your data &nbsp;<span class="mmctag">MMC</span></h2>
+      <div class="src">
+        <div class="lg">X</div>
+        <div><b>We found your books in Xero</b><br><small>Detected from your sign-up details</small></div>
+      </div>
+      <p style="margin:0 0 4px;font-size:14.5px">The Xero to Reckon One self-serve tool moves your contacts, accounts, invoices and history across. No spreadsheets, no MMC touch.</p>
+      <div id="swWrap">
+        <button class="btn mmc" id="swBtn" style="margin-top:14px">Start the switch</button>
+      </div>
+      <div id="swProg" class="hidden">
+        <div class="bar"><i id="swBar"></i></div>
+        <p id="swMsg" style="margin:0;font-size:13.5px;color:var(--muted)">Moving your data&hellip;</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Add your apps &nbsp;<span class="mmctag">MMC</span></h2>
+      <p style="margin:0 0 14px;font-size:14px;color:var(--muted)">Switch on the tools you already run. They work inside Reckon One from day one.</p>
+      <div class="applist" id="onbApps"></div>
+      <div class="ocount" id="ocount">0 of 5 apps added</div>
+    </div>
+  </div>
+  <div class="octa">
+    <button class="btn" id="toWs">Continue to workspace &rarr;</button>
+    <span style="font-size:13px;color:var(--muted)">See how the suite lives inside Reckon One.</span>
+  </div>
+</div></section>
+
+<!-- WORKSPACE -->
+<section id="ws" class="hidden">
+  <nav class="side">
+    <div class="navlbl">Reckon One</div>
+    <button class="nav core" data-app="dash" aria-current="true"><span class="d"></span>Dashboard</button>
+    <button class="nav core" data-app="_sales"><span class="d"></span>Sales &amp; invoices</button>
+    <button class="nav core" data-app="_bills"><span class="d"></span>Bills</button>
+    <button class="nav core" data-app="_bank"><span class="d"></span>Banking</button>
+    <div class="navlbl">Your apps &middot; by MMC</div>
+    <div id="wsNav"></div>
+  </nav>
+  <div class="main" id="wsMain"></div>
+</section>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var apps=[
+    {id:"receipt",ic:"▤",name:"MMC Receipt",tag:"Capture receipts and bills"},
+    {id:"reporting",ic:"▦",name:"Reporting",tag:"Dashboards and forecasts"},
+    {id:"approvals",ic:"✓",name:"Approvals",tag:"Sign off bills and expenses"},
+    {id:"time",ic:"◷",name:"Timesheets & projects",tag:"Track hours and jobs"},
+    {id:"inventory",ic:"▣",name:"Inventory",tag:"Stock and reorder"}
+  ];
+  var money=function(n){return "$"+n.toLocaleString("en-AU",{minimumFractionDigits:2,maximumFractionDigits:2})};
+
+  /* ---- tabs ---- */
+  function show(v){
+    $("#onb").classList.toggle("hidden",v!=="onb");
+    $("#ws").classList.toggle("hidden",v!=="ws");
+    $$(".tab").forEach(function(t){t.setAttribute("aria-selected", t.dataset.view===v)});
+    window.scrollTo(0,0);
+  }
+  $$(".tab").forEach(function(t){t.addEventListener("click",function(){show(t.dataset.view)})});
+  $("#toWs").addEventListener("click",function(){show("ws")});
+
+  /* ---- onboarding: switch tool ---- */
+  $("#swBtn").addEventListener("click",function(){
+    $("#swWrap").classList.add("hidden");
+    $("#swProg").classList.remove("hidden");
+    var pct=0; var el=$("#swBar"); el.style.width="8%";
+    var steps=["Reading your Xero file…","Moving contacts and accounts…","Moving invoices and history…","Reconciling balances…","Done. Your books are in Reckon One."];
+    var i=0;
+    var t=setInterval(function(){
+      i++; pct=Math.min(100,i*25);
+      el.style.width=pct+"%";
+      $("#swMsg").textContent=steps[Math.min(i,steps.length-1)];
+      if(i>=4){clearInterval(t); el.style.background="var(--good)"; $("#swMsg").style.color="var(--good)";
+        $(".steps .step.active").classList.remove("active"); $(".steps .step.active"); }
+    },700);
+  });
+
+  /* ---- onboarding: app toggles ---- */
+  var added={};
+  $("#onbApps").innerHTML=apps.map(function(a){
+    return '<div class="approw"><span class="ic">'+a.ic+'</span><span class="nm">'+a.name+'<small>'+a.tag+'</small></span>'+
+      '<button class="toggle" data-id="'+a.id+'" aria-pressed="false">Add</button></div>';
+  }).join("");
+  $("#onbApps").addEventListener("click",function(e){
+    var b=e.target.closest(".toggle"); if(!b)return;
+    var on=b.getAttribute("aria-pressed")==="true";
+    b.setAttribute("aria-pressed",!on); b.textContent=!on?"Added ✓":"Add";
+    added[b.dataset.id]=!on;
+    var n=Object.keys(added).filter(function(k){return added[k]}).length;
+    $("#ocount").textContent=n+" of 5 apps added";
+  });
+
+  /* ---- workspace nav ---- */
+  $("#wsNav").innerHTML=apps.map(function(a){
+    return '<button class="nav mmc" data-app="'+a.id+'"><span class="d"></span>'+a.name+'<span class="tagpill">MMC</span></button>';
+  }).join("");
+  $("#ws").addEventListener("click",function(e){
+    var b=e.target.closest(".nav"); if(!b)return;
+    $$(".nav").forEach(function(n){n.setAttribute("aria-current", n===b)});
+    render(b.dataset.app);
+  });
+
+  /* ---- workspace panels ---- */
+  function head(title,sub,mmc){
+    return '<div class="mhd"><h1>'+title+'</h1>'+(mmc?'<span class="mmctag">MMC &middot; integrated with Reckon One</span>':'')+'</div>'+
+      '<p class="msub">'+sub+'</p>';
+  }
+  var panels={
+    dash:function(){
+      return head("Dashboard","Smith & Co Pty Ltd &middot; this month",false)+
+      '<div class="tiles">'+
+        '<div class="tile"><div class="k">Cash on hand</div><div class="v">'+money(48250)+'</div></div>'+
+        '<div class="tile"><div class="k">Owed to you</div><div class="v">'+money(21840)+'</div></div>'+
+        '<div class="tile"><div class="k">Net profit</div><div class="v good">'+money(12610)+'</div></div>'+
+      '</div>'+
+      '<p style="font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:6px 0 10px">Your MMC apps</p>'+
+      '<div class="qgrid">'+apps.map(function(a){
+        return '<button class="q" data-app="'+a.id+'"><span class="ic">'+a.ic+'</span><span class="nm">'+a.name+'<small>'+a.tag+'</small></span></button>';
+      }).join("")+'</div>'+
+      '<div class="note"><span>'+apps.length+' apps, one login.</span><span style="color:var(--muted)">The suite runs inside Reckon One. One bill, one data model, no extra integrations to manage.</span></div>';
+    },
+    receipt:function(){
+      var rs=[["Officeworks","Office supplies",845.60,76.87,"Coded"],["Caltex","Fuel & vehicle",98.40,8.95,"Coded"],["The Press Cafe","Meals & entertainment",42.00,3.82,"Review"]];
+      return head("MMC Receipt","Snap a receipt or email a bill; it is coded and posted to Reckon One",true)+
+      '<div class="note" style="margin-top:0;margin-bottom:18px"><span>Already live.</span><span style="color:var(--muted)">MMC Receipt is the one suite app shipping on Reckon One today, our proof the rest can follow.</span></div>'+
+      '<table><tr><th>Vendor</th><th>Account</th><th class="n">Amount</th><th class="n">GST</th><th>Status</th></tr>'+
+      rs.map(function(r){return '<tr><td><b>'+r[0]+'</b></td><td style="color:var(--muted)">'+r[1]+'</td><td class="n">'+money(r[2])+'</td><td class="n">'+money(r[3])+'</td><td>'+(r[4]==="Coded"?'<span class="chip good">Coded</span>':'<span class="chip warn">Review</span>')+'</td></tr>'}).join("")+
+      '</table>';
+    },
+    reporting:function(){
+      var data=[[ "Jun",62],["Jul",71],["Aug",68],["Sep",83],["Oct",90],["Nov",97]];
+      var max=100;
+      return head("Reporting","Live dashboards and a 90-day cash forecast",true)+
+      '<div class="tiles">'+
+        '<div class="tile"><div class="k">Revenue, Nov</div><div class="v">'+money(97000)+'</div></div>'+
+        '<div class="tile"><div class="k">Gross margin</div><div class="v">61%</div></div>'+
+        '<div class="tile"><div class="k">Forecast cash, 90d</div><div class="v good">'+money(74300)+'</div></div>'+
+      '</div>'+
+      '<div class="card" style="padding:18px"><div style="font-size:13px;color:var(--muted);margin-bottom:6px">Revenue, last 6 months ($000s)</div>'+
+      '<div class="chart">'+data.map(function(d,i){var h=Math.round(d[1]/max*100);return '<div class="col"><div class="barwrap"><div class="b'+(i===data.length-1?' mmc':'')+'" style="height:'+h+'%"></div></div><div class="lbl">'+d[0]+'</div></div>'}).join("")+'</div></div>';
+    },
+    approvals:function(){
+      var q=[["MMC Receipt &middot; Telstra","$410.00","Due in 3 days"],["Expense &middot; A. Chen travel","$1,240.00","Awaiting you"],["PO &middot; Fishbowl stock","$5,600.00","Over $5k, needs sign-off"]];
+      return head("Approvals","Route bills and expenses for sign-off before they are paid",true)+
+      '<table><tr><th>Item</th><th class="n">Amount</th><th>Status</th><th></th></tr>'+
+      q.map(function(r){return '<tr><td><b>'+r[0].split(" &middot; ")[0]+'</b> <span style="color:var(--muted)">&middot; '+r[0].split(" &middot; ")[1]+'</span></td><td class="n">'+r[1]+'</td><td><span class="chip warn">'+r[2]+'</span></td><td class="n"><button class="rowbtn go">Approve</button></td></tr>'}).join("")+
+      '</table>';
+    },
+    time:function(){
+      var proj=[["Coastal Interiors fit-out",72,"36 of 50 hrs"],["Keppel maintenance retainer",45,"18 of 40 hrs"],["Marigold launch",90,"27 of 30 hrs"]];
+      return head("Timesheets &amp; projects","Track hours against jobs, then bill them straight into Reckon One",true)+
+      '<div class="tiles"><div class="tile"><div class="k">Hours this week</div><div class="v">38.5</div></div>'+
+      '<div class="tile"><div class="k">Unbilled</div><div class="v">'+money(6420)+'</div></div>'+
+      '<div class="tile"><div class="k">Active jobs</div><div class="v">3</div></div></div>'+
+      '<div class="proj">'+proj.map(function(p){return '<div class="p"><div class="pt">'+p[0]+'<span>'+p[2]+'</span></div><div class="bar" style="margin:0"><i style="width:'+p[1]+'%;transition:none"></i></div></div>'}).join("")+'</div>';
+    },
+    inventory:function(){
+      var items=[["Timber panel, oak","SKU-1042",128,"ok"],["Hinge set, brass","SKU-2210",14,"low"],["Sealant, clear 500ml","SKU-3307",63,"ok"],["Handle, matte black","SKU-4120",6,"low"]];
+      return head("Inventory","Live stock levels, with reorder flags synced to your bills",true)+
+      '<table><tr><th>Item</th><th>SKU</th><th class="n">On hand</th><th>Status</th></tr>'+
+      items.map(function(r){return '<tr><td><b>'+r[0]+'</b></td><td style="color:var(--muted)">'+r[1]+'</td><td class="n">'+r[2]+'</td><td>'+(r[3]==="low"?'<span class="chip warn">Reorder</span>':'<span class="chip good">In stock</span>')+'</td></tr>'}).join("")+
+      '</table>';
+    }
+  };
+  function render(id){
+    if(id && id.charAt(0)==="_"){ // core placeholder
+      $("#wsMain").innerHTML=head(({_sales:"Sales & invoices",_bills:"Bills",_bank:"Banking"})[id],"Core Reckon One. Shown for context.",false)+
+        '<div class="note"><span>Reckon One core.</span><span style="color:var(--muted)">This demo focuses on the MMC app suite. Pick an app under &ldquo;Your apps&rdquo;.</span></div>';
+      return;
+    }
+    $("#wsMain").innerHTML=(panels[id]||panels.dash)();
+  }
+  render("dash");
+})();
+</script>
+
+</body></html>
